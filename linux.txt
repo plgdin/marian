@@ -1,3 +1,9 @@
+//NER
+import nltk
+s="Barack Obama was born in Hawaii"
+print(nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(s))))
+
+
 //concordance
 import nltk
 nltk.download('punkt')
@@ -7,6 +13,7 @@ def c(w):
   if x==w:print(f"index:{i}, Context:{' '.join(t[max(0,i-5):i+6])}")
 c("cat")
 c("with")
+
 
 //Pre-processing
 from nltk.tokenize import *
@@ -23,6 +30,27 @@ print("Lower Casing:",t.lower())
 print("No punctuation:",t.translate(str.maketrans('','','.,?!')))
 print("Stop word removed:",[i for i in w if i.lower() not in stopwords.words('english')])
 print("Lemmatized word:",WordNetLemmatizer().lemmatize("running",pos='v'))
+
+
+//bag of words
+from sklearn.feature_extraction.text import CountVectorizer
+c=["This is the first document","This document is the second document","And this is the third one","Is this the first document?"]
+x=CountVectorizer().fit_transform(c)
+print("Bag of Words(bow)matirx:")
+print(x.toarray())
+print("\n Feature:")
+print(CountVectorizer().fit(c).get_feature_names_out())
+
+
+//NER
+import nltk
+from nltk import *
+
+t="Apple is planning to build a new office in San Francisco and hire 100 employees"
+for i in ne_chunk(pos_tag(word_tokenize(t))):
+    if isinstance(i,nltk.tree.Tree):
+        print("Entity:"," ".join([w for w,p in i]),"| Label:",i.label())
+
 
 //TF IDF
 import math
@@ -42,6 +70,7 @@ for w in set(" ".join(d).split()):
 print("TF-IDF values of each word in the document:")
 for w in tf:
  print(f"{w}: {tf[w]/N*idf[w]:.4f}")
+
 
 //postagging
 import numpy as np
@@ -82,6 +111,7 @@ c=[[("The","DET"),("cat","NOUN"),("runs","VERB")],[("A","DET"),("dog","NOUN"),("
 h=H();h.train(c)
 print(h.predict(["The","dog","runs"]))
 
+
 //chatbot
 import random
 r={
@@ -99,6 +129,7 @@ while 1:
   print("Chatbot: Goodbye!")
   break
  print("Chatbot:",random.choice(r.get(u,r["default"])))
+
 
 //text classification
 from sklearn.datasets import fetch_20newsgroups
@@ -130,21 +161,3 @@ p=m.predict(x2)
 print("\nTest Accuracy:",accuracy_score(y2,p))
 print("\nClassification Report (Test Set):")
 print(classification_report(y2,p,target_names=d.target_names))
-
-//NER
-import nltk
-from nltk import *
-
-t="Apple is planning to build a new office in San Francisco and hire 100 employees"
-for i in ne_chunk(pos_tag(word_tokenize(t))):
-    if isinstance(i,nltk.tree.Tree):
-        print("Entity:"," ".join([w for w,p in i]),"| Label:",i.label())
-
-//bag of words
-from sklearn.feature_extraction.text import CountVectorizer
-c=["This is the first document","This document is the second document","And this is the third one","Is this the first document?"]
-x=CountVectorizer().fit_transform(c)
-print("Bag of Words(bow)matirx:")
-print(x.toarray())
-print("\n Feature:")
-print(CountVectorizer().fit(c).get_feature_names_out())

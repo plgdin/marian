@@ -33,21 +33,13 @@ def show_banner():
 
 def detect_category(title):
     t = title.lower()
-    if 'tokenize' in t or 'word' in t or 'sentence' in t: return 'Tokenize'
-    if 'stem' in t: return 'Stemming'
-    if 'lemmatiz' in t: return 'Lemmatization'
-    if 'stopword' in t or 'filter' in t: return 'Stopwords'
+    if 'pre-process' in t or 'preprocessing' in t: return 'Preprocessing'
     if 'pos' in t or 'tag' in t: return 'POS Tagging'
-    if 'chunk' in t: return 'Chunking'
     if 'ner' in t or 'entity' in t or 'name' in t: return 'NER'
     if 'concord' in t: return 'Concordance'
-    if 'count' in t or 'vocab' in t: return 'Vocabulary'
-    if 'pars' in t: return 'Parsing'
     if 'bag' in t or 'bow' in t: return 'Bag of Words'
-    if 'similar' in t or 'match' in t: return 'Similarity'
     if 'tf' in t or 'idf' in t: return 'TF-IDF'
     if 'chat' in t or 'bot' in t or 'agent' in t: return 'Chatbot'
-    if 'translat' in t: return 'Translation'
     if 'class' in t: return 'Classification'
     return 'General'
 

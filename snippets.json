@@ -1,0 +1,83 @@
+[
+    {
+        "id": "snip_1779946807049_44074",
+        "title": "NER",
+        "category": "NER",
+        "language": "python",
+        "content": "import nltk\r\ns=\"Barack Obama was born in Hawaii\"\r\nprint(nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(s))))",
+        "copies": 0,
+        "createdAt": 1779946807049
+    },
+    {
+        "id": "snip_1779946807050_36647",
+        "title": "concordance",
+        "category": "Concordance",
+        "language": "python",
+        "content": "import nltk\r\nnltk.download('punkt')\r\nt=nltk.word_tokenize(\"fat cat sat on a big red mat with a hat\")\r\ndef c(w):\r\n for i,x in enumerate(t):\r\n  if x==w:print(f\"index:{i}, Context:{' '.join(t[max(0,i-5):i+6])}\")\r\nc(\"cat\")\r\nc(\"with\")",
+        "copies": 0,
+        "createdAt": 1779946807050
+    },
+    {
+        "id": "snip_1779946807055_8443",
+        "title": "Pre-processing",
+        "category": "Preprocessing",
+        "language": "python",
+        "content": "from nltk.tokenize import *\r\nfrom nltk.corpus import stopwords\r\nfrom nltk.stem import WordNetLemmatizer\r\nimport string\r\n\r\nt=\"Hello, how are you? I'm doing well, thank you!\"\r\nw=word_tokenize(t)\r\n\r\nprint(\"Words:\",w)\r\nprint(\"Sentences:\",sent_tokenize(t))\r\nprint(\"Lower Casing:\",t.lower())\r\nprint(\"No punctuation:\",t.translate(str.maketrans('','','.,?!')))\r\nprint(\"Stop word removed:\",[i for i in w if i.lower() not in stopwords.words('english')])\r\nprint(\"Lemmatized word:\",WordNetLemmatizer().lemmatize(\"running\",pos='v'))",
+        "copies": 0,
+        "createdAt": 1779946807055
+    },
+    {
+        "id": "snip_1779946807058_41382",
+        "title": "bag of words",
+        "category": "Bag of Words",
+        "language": "python",
+        "content": "from sklearn.feature_extraction.text import CountVectorizer\r\nc=[\"This is the first document\",\"This document is the second document\",\"And this is the third one\",\"Is this the first document?\"]\r\nx=CountVectorizer().fit_transform(c)\r\nprint(\"Bag of Words(bow)matirx:\")\r\nprint(x.toarray())\r\nprint(\"\\n Feature:\")\r\nprint(CountVectorizer().fit(c).get_feature_names_out())",
+        "copies": 0,
+        "createdAt": 1779946807058
+    },
+    {
+        "id": "snip_1779946807060_91667",
+        "title": "NER",
+        "category": "NER",
+        "language": "python",
+        "content": "import nltk\r\nfrom nltk import *\r\n\r\nt=\"Apple is planning to build a new office in San Francisco and hire 100 employees\"\r\nfor i in ne_chunk(pos_tag(word_tokenize(t))):\r\n    if isinstance(i,nltk.tree.Tree):\r\n        print(\"Entity:\",\" \".join([w for w,p in i]),\"| Label:\",i.label())",
+        "copies": 0,
+        "createdAt": 1779946807060
+    },
+    {
+        "id": "snip_1779946807061_92985",
+        "title": "TF IDF",
+        "category": "TF-IDF",
+        "language": "python",
+        "content": "import math\r\nfrom collections import Counter\r\n\r\nd=[\"python is program\",\"machine is fun fun\",\"python is machine\"]\r\nN=len(d)\r\ntf={}\r\nfor i in d:\r\n w=i.split();c=Counter(w)\r\n for j in c:tf[j]=tf.get(j,0)+c[j]/len(w)\r\n\r\nidf={}\r\nfor w in set(\" \".join(d).split()):\r\n idf[w]=math.log(N/sum(w in i.split() for i in d))\r\n\r\nprint(\"TF-IDF values of each word in the document:\")\r\nfor w in tf:\r\n print(f\"{w}: {tf[w]/N*idf[w]:.4f}\")",
+        "copies": 0,
+        "createdAt": 1779946807061
+    },
+    {
+        "id": "snip_1779946807062_80994",
+        "title": "postagging",
+        "category": "POS Tagging",
+        "language": "python",
+        "content": "import numpy as np\r\nclass H:\r\n def train(s,c):\r\n  s.st={};s.ob={}\r\n  for x in c:\r\n   for w,t in x:\r\n    if t not in s.st:s.st[t]=len(s.st)\r\n    if w not in s.ob:s.ob[w]=len(s.ob)\r\n  n,m=len(s.st),len(s.ob)\r\n  s.tr=np.zeros((n,n));s.em=np.zeros((n,m));st=np.zeros(n)\r\n  for x in c:\r\n   p=None\r\n   for w,t in x:\r\n    i,j=s.st[t],s.ob[w]\r\n    if p==None:st[i]+=1\r\n    else:s.tr[s.st[p]][i]+=1\r\n    s.em[i][j]+=1;p=t\r\n  s.sp=st/st.sum()\r\n  s.tr/=np.where(s.tr.sum(1,keepdims=1)==0,1,s.tr.sum(1,keepdims=1))\r\n  s.em/=np.where(s.em.sum(1,keepdims=1)==0,1,s.em.sum(1,keepdims=1))\r\n def predict(s,a):\r\n  T,N=len(a),len(s.st)\r\n  d=np.zeros((T,N));p=np.zeros((T,N),int);l=list(s.st)\r\n  w=s.ob.get(a[0])\r\n  for j in range(N):d[0,j]=s.sp[j] if w==None else s.sp[j]*s.em[j,w]\r\n  for t in range(1,T):\r\n   w=s.ob.get(a[t])\r\n   for j in range(N):\r\n    x=d[t-1]*s.tr[:,j]\r\n    p[t,j]=np.argmax(x)\r\n    d[t,j]=np.max(x) if w==None else np.max(x)*s.em[j,w]\r\n  b=[np.argmax(d[T-1])]\r\n  for t in range(T-2,-1,-1):b=[p[t+1,b[0]]]+b\r\n  return list(zip(a,[l[i] for i in b]))\r\nc=[[(\"The\",\"DET\"),(\"cat\",\"NOUN\"),(\"runs\",\"VERB\")],[(\"A\",\"DET\"),(\"dog\",\"NOUN\"),(\"barks\",\"VERB\")]]\r\nh=H();h.train(c)\r\nprint(h.predict([\"The\",\"dog\",\"runs\"]))",
+        "copies": 0,
+        "createdAt": 1779946807062
+    },
+    {
+        "id": "snip_1779946807063_31938",
+        "title": "chatbot",
+        "category": "Chatbot",
+        "language": "python",
+        "content": "import random\r\nr={\r\n\"hi\":[\"Hello!\",\"Hi There!\",\"Hey!\"],\r\n\"how are you?\":[\"I'm good thank you!\",\"Feeling great,thanks for asking!\",\"I'm doing fine.\"],\r\n\"what's your name?\":[\"I'm a chatbot.\",\"You can call me chatbot\",\"My name is chatbot.\"],\r\n\"bye\":[\"Goodbye!\",\"ByeBye!\",\"See you later!\"],\r\n\"default\":[\"Sorry, I didnt understand that.\",\"Could you please rephrase that?\",\"I'm not sure what you mean.\"]\r\n}\r\n\r\nprint(\"Chatbot: Hi, I'm a chatbot. How can i help you?\")\r\nwhile 1:\r\n u=input(\"You: \").lower().strip()\r\n if u==\"exit\":\r\n  print(\"Chatbot: Goodbye!\")\r\n  break\r\n print(\"Chatbot:\",random.choice(r.get(u,r[\"default\"])))",
+        "copies": 0,
+        "createdAt": 1779946807063
+    },
+    {
+        "id": "snip_1779946807065_70858",
+        "title": "text classification",
+        "category": "Classification",
+        "language": "python",
+        "content": "from sklearn.datasets import fetch_20newsgroups\r\nfrom sklearn.feature_extraction.text import TfidfVectorizer\r\nfrom sklearn.model_selection import train_test_split\r\nfrom sklearn.naive_bayes import MultinomialNB\r\nfrom sklearn.metrics import *\r\n\r\nc=['alt.atheism','soc.religion.christian','comp.graphics','sci.med']\r\nd=fetch_20newsgroups(subset='all',categories=c,shuffle=1,random_state=42)\r\n\r\nx1,x2,y1,y2=train_test_split(d.data,d.target,test_size=0.2,random_state=42)\r\n\r\nv=TfidfVectorizer(stop_words='english',max_features=1000)\r\nx1=v.fit_transform(x1)\r\nx2=v.transform(x2)\r\n\r\nx1,xv,y1,yv=train_test_split(x1,y1,test_size=0.2,random_state=42)\r\n\r\nm=MultinomialNB()\r\nm.fit(x1,y1)\r\n\r\np=m.predict(xv)\r\nprint(\"Validation Accuracy:\",accuracy_score(yv,p))\r\nprint(\"\\nClassification Report (Validation Set):\")\r\nprint(classification_report(yv,p,target_names=d.target_names))\r\n\r\np=m.predict(x2)\r\nprint(\"\\nTest Accuracy:\",accuracy_score(y2,p))\r\nprint(\"\\nClassification Report (Test Set):\")\r\nprint(classification_report(y2,p,target_names=d.target_names))",
+        "copies": 0,
+        "createdAt": 1779946807065
+    }
+]
