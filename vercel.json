@@ -5,15 +5,5 @@
     "api/snippets.js": {
       "includeFiles": "doc.txt"
     }
-  },
-  "routes": [
-    {
-      "src": "/api/snippets",
-      "dest": "/api/snippets.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ]
+  }
 }
