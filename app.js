@@ -399,30 +399,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // --- State & Storage Actions ---
 async function loadState() {
-    let loadedFromApi = false;
-    
-    // 1. Try to load from server endpoint
     try {
-        const response = await fetch('/api/snippets');
+        const response = await fetch('/doc.txt');
         if (response.ok) {
-            snippets = await response.json();
-            loadedFromApi = true;
+            const rawText = await response.text();
+            snippets = parseMultiSnippetText(rawText);
+            console.log(`Successfully fetched and parsed ${snippets.length} snippets from doc.txt`);
+        } else {
+            console.warn('Could not fetch doc.txt. Attempting local storage fallback.');
+            const saved = localStorage.getItem('clipflow_snippets');
+            if (saved) snippets = JSON.parse(saved);
         }
     } catch (e) {
-        console.warn('REST API server not found or down. Utilizing localStorage fallback.');
-    }
-
-    // 2. Fallback to localStorage
-    if (!loadedFromApi) {
+        console.error('Failed to load doc.txt:', e);
         const saved = localStorage.getItem('clipflow_snippets');
-        if (saved) {
-            try {
-                snippets = JSON.parse(saved);
-            } catch (e) {
-                console.error('Failed to parse saved snippets:', e);
-                snippets = [];
-            }
-        }
+        if (saved) snippets = JSON.parse(saved);
     }
     
     const savedView = localStorage.getItem('clipflow_view_mode');
@@ -435,22 +426,8 @@ async function loadState() {
 }
 
 async function saveState() {
-    // Save locally
-    localStorage.setItem('clipflow_snippets', JSON.stringify(snippets));
+    // Keep total copies statistic locally in browser
     localStorage.setItem('clipflow_total_copies', totalCopies);
-    
-    // Push sync to server API
-    try {
-        await fetch('/api/snippets', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(snippets)
-        });
-    } catch (e) {
-        console.warn('Could not sync snippets to workspace storage. Offline mode maintained.');
-    }
 }
 
 // --- Text Multi-Parser Engine ---
@@ -869,42 +846,47 @@ function closeViewerModal() { dom.viewerModal.classList.remove('active'); }
 
 // --- Events Setup ---
 function setupEventListeners() {
-    dom.btnLoadDemo.addEventListener('click', loadWorkspaceSeed);
-    dom.btnClearAll.addEventListener('click', clearAllSnippets);
-    dom.btnExport.addEventListener('click', exportBackup);
-    dom.btnAddModal.addEventListener('click', () => openEditModal());
-    dom.btnModalCancel.addEventListener('click', closeEditModal);
-    dom.modalCloseBtn.addEventListener('click', closeEditModal);
-    dom.snippetForm.addEventListener('submit', handleFormSubmit);
-    dom.viewerCloseBtn.addEventListener('click', closeViewerModal);
-    dom.btnViewerCopy.addEventListener('click', () => copyToClipboard(currentViewingContent, null, dom.viewerTitle.textContent));
-    dom.drawerCloseBtn.addEventListener('click', closeRightDrawer);
-    dom.btnDrawerCopy.addEventListener('click', () => {
-        if (currentDrawerSnippet) {
-            copyToClipboard(currentDrawerSnippet.content, null, currentDrawerSnippet.title);
-            const origHtml = dom.btnDrawerCopy.innerHTML;
-            dom.btnDrawerCopy.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
-            dom.btnDrawerCopy.style.background = 'var(--success-color)';
-            dom.btnDrawerCopy.style.borderColor = 'transparent';
-            setTimeout(() => { dom.btnDrawerCopy.innerHTML = origHtml; dom.btnDrawerCopy.style.background = ''; dom.btnDrawerCopy.style.borderColor = ''; }, 1000);
-        }
-    });
-    dom.btnDrawerEdit.addEventListener('click', () => { if (currentDrawerSnippet) openEditModal(currentDrawerSnippet); });
-    dom.btnDrawerDelete.addEventListener('click', () => { if (currentDrawerSnippet) deleteSnippet(currentDrawerSnippet.id); });
+    if (dom.btnLoadDemo) dom.btnLoadDemo.addEventListener('click', loadWorkspaceSeed);
+    if (dom.btnClearAll) dom.btnClearAll.addEventListener('click', clearAllSnippets);
+    if (dom.btnExport) dom.btnExport.addEventListener('click', exportBackup);
+    if (dom.btnAddModal) dom.btnAddModal.addEventListener('click', () => openEditModal());
+    if (dom.btnModalCancel) dom.btnModalCancel.addEventListener('click', closeEditModal);
+    if (dom.modalCloseBtn) dom.modalCloseBtn.addEventListener('click', closeEditModal);
+    if (dom.snippetForm) dom.snippetForm.addEventListener('submit', handleFormSubmit);
+    if (dom.viewerCloseBtn) dom.viewerCloseBtn.addEventListener('click', closeViewerModal);
+    if (dom.btnViewerCopy) dom.btnViewerCopy.addEventListener('click', () => copyToClipboard(currentViewingContent, null, dom.viewerTitle.textContent));
+    if (dom.drawerCloseBtn) dom.drawerCloseBtn.addEventListener('click', closeRightDrawer);
+    if (dom.btnDrawerCopy) {
+        dom.btnDrawerCopy.addEventListener('click', () => {
+            if (currentDrawerSnippet) {
+                copyToClipboard(currentDrawerSnippet.content, null, currentDrawerSnippet.title);
+                const origHtml = dom.btnDrawerCopy.innerHTML;
+                dom.btnDrawerCopy.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                dom.btnDrawerCopy.style.background = 'var(--success-color)';
+                dom.btnDrawerCopy.style.borderColor = 'transparent';
+                setTimeout(() => { dom.btnDrawerCopy.innerHTML = origHtml; dom.btnDrawerCopy.style.background = ''; dom.btnDrawerCopy.style.borderColor = ''; }, 1000);
+            }
+        });
+    }
+    if (dom.btnDrawerEdit) dom.btnDrawerEdit.addEventListener('click', () => { if (currentDrawerSnippet) openEditModal(currentDrawerSnippet); });
+    if (dom.btnDrawerDelete) dom.btnDrawerDelete.addEventListener('click', () => { if (currentDrawerSnippet) deleteSnippet(currentDrawerSnippet.id); });
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') { closeEditModal(); closeViewerModal(); closeRightDrawer(); }
     });
-    dom.snippetModal.addEventListener('click', (e) => { if (e.target === dom.snippetModal) closeEditModal(); });
-    dom.viewerModal.addEventListener('click', (e) => { if (e.target === dom.viewerModal) closeViewerModal(); });
-    dom.searchInput.addEventListener('input', renderSnippets);
-    dom.viewGrid.addEventListener('click', () => { viewMode = 'grid'; localStorage.setItem('clipflow_view_mode', 'grid'); updateViewToggleButtons(); renderSnippets(); });
-    dom.viewList.addEventListener('click', () => { viewMode = 'list'; localStorage.setItem('clipflow_view_mode', 'list'); updateViewToggleButtons(); renderSnippets(); });
+    if (dom.snippetModal) dom.snippetModal.addEventListener('click', (e) => { if (e.target === dom.snippetModal) closeEditModal(); });
+    if (dom.viewerModal) dom.viewerModal.addEventListener('click', (e) => { if (e.target === dom.viewerModal) closeViewerModal(); });
+    if (dom.searchInput) dom.searchInput.addEventListener('input', renderSnippets);
+    if (dom.viewGrid) dom.viewGrid.addEventListener('click', () => { viewMode = 'grid'; localStorage.setItem('clipflow_view_mode', 'grid'); updateViewToggleButtons(); renderSnippets(); });
+    if (dom.viewList) dom.viewList.addEventListener('click', () => { viewMode = 'list'; localStorage.setItem('clipflow_view_mode', 'list'); updateViewToggleButtons(); renderSnippets(); });
+    
     const dropzone = dom.dropzone;
-    ['dragenter', 'dragover'].forEach(eventName => { dropzone.addEventListener(eventName, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); }, false); });
-    ['dragleave', 'drop'].forEach(eventName => { dropzone.addEventListener(eventName, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); }, false); });
-    dropzone.addEventListener('drop', (e) => { handleFilesImport(e.dataTransfer.files); });
-    dom.fileInput.addEventListener('change', (e) => { handleFilesImport(e.target.files); });
-    dropzone.addEventListener('click', (e) => { if (e.target.closest('#file-input') || e.target.closest('label')) return; dom.fileInput.click(); });
+    if (dropzone) {
+        ['dragenter', 'dragover'].forEach(eventName => { dropzone.addEventListener(eventName, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); }, false); });
+        ['dragleave', 'drop'].forEach(eventName => { dropzone.addEventListener(eventName, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); }, false); });
+        dropzone.addEventListener('drop', (e) => { handleFilesImport(e.dataTransfer.files); });
+        dropzone.addEventListener('click', (e) => { if (e.target.closest('#file-input') || e.target.closest('label')) return; dom.fileInput.click(); });
+    }
+    if (dom.fileInput) dom.fileInput.addEventListener('change', (e) => { handleFilesImport(e.target.files); });
 }
 
 function updateViewToggleButtons() {

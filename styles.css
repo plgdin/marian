@@ -5,39 +5,39 @@
    ========================================================================== */
 
 :root {
-    /* Color Palette */
-    --bg-base: #07050e;
-    --bg-surface: rgba(18, 14, 33, 0.6);
-    --bg-surface-solid: #120e21;
-    --bg-surface-hover: rgba(26, 21, 46, 0.7);
-    --border-color: rgba(255, 255, 255, 0.06);
-    --border-hover: rgba(147, 51, 234, 0.4);
+    /* Color Palette - Premium Monochrome Black & White */
+    --bg-base: #000000;
+    --bg-surface: rgba(15, 15, 15, 0.85);
+    --bg-surface-solid: #0d0d0d;
+    --bg-surface-hover: rgba(30, 30, 30, 0.95);
+    --border-color: rgba(255, 255, 255, 0.12);
+    --border-hover: rgba(255, 255, 255, 0.6);
     
-    --text-primary: #f3f4f6;
-    --text-secondary: #9ca3af;
-    --text-muted: #6b7280;
+    --text-primary: #ffffff;
+    --text-secondary: #a3a3a3;
+    --text-muted: #555555;
     
-    /* Accents (Purples, Cyans, and Pinks) */
-    --accent-purple: #9333ea;
-    --accent-purple-glow: rgba(147, 51, 234, 0.5);
-    --accent-cyan: #06b6d4;
-    --accent-cyan-glow: rgba(6, 182, 212, 0.5);
+    /* Accents - Pure Monochrome */
+    --accent-purple: #ffffff;
+    --accent-purple-glow: rgba(255, 255, 255, 0.15);
+    --accent-cyan: #ffffff;
+    --accent-cyan-glow: rgba(255, 255, 255, 0.15);
     
-    --success-color: #10b981;
-    --success-glow: rgba(16, 185, 129, 0.4);
-    --danger-color: #ef4444;
-    --warning-color: #f59e0b;
+    --success-color: #ffffff;
+    --success-glow: rgba(255, 255, 255, 0.25);
+    --danger-color: #ffffff;
+    --warning-color: #ffffff;
     
     /* Styling Tokens */
-    --radius-sm: 8px;
-    --radius-md: 14px;
-    --radius-lg: 20px;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
     --font-sans: 'Inter', sans-serif;
-    --font-heading: 'Outfit', sans-serif;
+    --font-heading: 'Inter', sans-serif;
     --font-mono: 'Fira Code', monospace;
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.7), 0 1px 1px 0 rgba(255, 255, 255, 0.05) inset;
+    --transition-smooth: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-premium: 0 8px 24px rgba(0, 0, 0, 0.8), 0 1px 1px 0 rgba(255, 255, 255, 0.05) inset;
 }
 
 /* ==========================================================================
@@ -59,41 +59,9 @@ body {
     position: relative;
 }
 
-/* Ambient Background Glows */
+/* Ambient Background Glows - Disabled for clean Monochrome theme */
 .bg-glow {
-    position: fixed;
-    width: 600px;
-    height: 600px;
-    border-radius: 50%;
-    filter: blur(160px);
-    opacity: 0.15;
-    pointer-events: none;
-    z-index: -1;
-    animation: floating-glow 20s infinite alternate ease-in-out;
-}
-
-.bg-glow-1 {
-    background: radial-gradient(circle, var(--accent-purple) 0%, transparent 70%);
-    top: -10%;
-    left: -10%;
-}
-
-.bg-glow-2 {
-    background: radial-gradient(circle, var(--accent-cyan) 0%, transparent 70%);
-    bottom: -10%;
-    right: -10%;
-    animation-delay: -5s;
-}
-
-.bg-glow-3 {
-    background: radial-gradient(circle, #ec4899 0%, transparent 70%);
-    top: 40%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 400px;
-    height: 400px;
-    opacity: 0.08;
-    animation-delay: -10s;
+    display: none !important;
 }
 
 @keyframes floating-glow {
