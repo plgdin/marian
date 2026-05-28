@@ -1,7 +1,7 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
-export default function handler(req, res) {
+module.exports = function handler(req, res) {
     const method = req.method;
     const dbPath = path.join(process.cwd(), 'snippets.json');
     const txtPath = path.join(process.cwd(), 'doc.txt');
