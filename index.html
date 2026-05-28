@@ -69,42 +69,16 @@
         <!-- Main Content Area -->
         <main class="app-main">
             <!-- Header Section -->
-            <header class="app-header">
-                <div class="header-search">
+            <header class="app-header" style="justify-content: center;">
+                <div class="header-search" style="max-width: 800px; width: 100%;">
                     <i class="fa-solid fa-magnifying-glass search-icon"></i>
                     <input type="text" id="search-input" placeholder="Search snippets by title, tag, or contents..." autocomplete="off">
                     <span class="search-shortcut">/</span>
-                </div>
-                <div class="header-actions">
-                    <button class="btn btn-primary" id="btn-add-modal">
-                        <i class="fa-solid fa-plus"></i> New Snippet
-                    </button>
                 </div>
             </header>
 
             <!-- Dashboard Content -->
             <div class="main-content">
-                <!-- Dropzone Area -->
-                <section class="dropzone-section">
-                    <div class="dropzone" id="file-dropzone">
-                        <div class="dropzone-content">
-                            <div class="dropzone-icon">
-                                <i class="fa-solid fa-cloud-arrow-up"></i>
-                            </div>
-                            <div class="dropzone-text">
-                                <h3>Drop your text files here</h3>
-                                <p>Supports single <code>.txt</code> files or structured files like <code>doc.txt</code> (auto-parsed by <code>//Title</code> comments)</p>
-                            </div>
-                            <div class="dropzone-action">
-                                <label for="file-input" class="btn btn-sm btn-outline">
-                                    <i class="fa-solid fa-folder-open"></i> Browse Files
-                                </label>
-                                <input type="file" id="file-input" multiple accept=".txt,.py,.js,.html,.css,.json" style="display: none;">
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
                 <!-- Grid Options / Toolbar -->
                 <section class="toolbar-section">
                     <div class="toolbar-left">
@@ -119,9 +93,6 @@
                                 <i class="fa-solid fa-list"></i>
                             </button>
                         </div>
-                        <button class="btn btn-secondary btn-sm" id="btn-clear-all" style="color: var(--danger-color); border-color: rgba(239, 68, 68, 0.2);">
-                            <i class="fa-solid fa-trash-can"></i> Clear All
-                        </button>
                     </div>
                 </section>
 
@@ -132,10 +103,7 @@
                         <div class="empty-state" id="empty-state">
                             <div class="empty-icon"><i class="fa-regular fa-clipboard"></i></div>
                             <h3>No Snippets Found</h3>
-                            <p>Import your <code>doc.txt</code> file or add a snippet manually to get started.</p>
-                            <button class="btn btn-primary btn-sm" id="btn-load-demo">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i> Load Workspace doc.txt
-                            </button>
+                            <p>Verify that your <code>doc.txt</code> file exists and is populated with comments.</p>
                         </div>
                     </div>
                 </section>
@@ -245,16 +213,6 @@
                     </button>
                 </div>
                 <pre><code id="drawer-content" class="fira-code">Select a snippet from the grid to view its detailed contents and copy it directly from this panel.</code></pre>
-            </div>
-            
-            <div class="drawer-actions">
-                <button class="btn btn-secondary btn-sm" id="btn-drawer-edit">
-                    <i class="fa-solid fa-pen"></i> Edit Snippet
-                </button>
-                <button class="btn btn-secondary btn-sm" id="btn-drawer-delete" style="color: var(--danger-color); border-color: rgba(239, 68, 68, 0.2);">
-                    <i class="fa-solid fa-trash-can"></i> Delete
-                </button>
-            </div>
         </div>
     </div>
 

@@ -108,44 +108,17 @@ function parseDocText(text) {
     return imported;
 }
 
-// Core database controller (Zero-dependency filesystem reader/writer)
+// Core database controller (Parses doc.txt directly as single source of truth)
 function getSnippets() {
-    // 1. If snippets.json exists, load it
-    if (fs.existsSync(DATA_FILE)) {
-        try {
-            const rawData = fs.readFileSync(DATA_FILE, 'utf8');
-            return JSON.parse(rawData);
-        } catch (e) {
-            console.error('Failed to parse snippets.json. Rebuilding...', e);
-        }
-    }
-
-    // 2. If doc.txt exists, seed the DB from it
     if (fs.existsSync(SOURCE_FILE)) {
         try {
-            console.log('snippets.json not found. Parsing doc.txt to seed database.');
             const rawText = fs.readFileSync(SOURCE_FILE, 'utf8');
-            const parsed = parseDocText(rawText);
-            
-            // Save initial seed to database file
-            fs.writeFileSync(DATA_FILE, JSON.stringify(parsed, null, 4), 'utf8');
-            return parsed;
+            return parseDocText(rawText);
         } catch (e) {
             console.error('Failed to parse doc.txt:', e);
         }
     }
-
     return [];
-}
-
-function saveSnippets(snippets) {
-    try {
-        fs.writeFileSync(DATA_FILE, JSON.stringify(snippets, null, 4), 'utf8');
-        return true;
-    } catch (e) {
-        console.error('Failed to write database file snippets.json:', e);
-        return false;
-    }
 }
 
 // Server request handler routing static assets and REST API endpoints
@@ -164,21 +137,8 @@ const server = http.createServer((req, res) => {
             res.end(JSON.stringify(data));
             return;
         } else if (method === 'POST') {
-            let body = '';
-            req.on('data', chunk => {
-                body += chunk.toString();
-            });
-            req.on('end', () => {
-                try {
-                    const snippets = JSON.parse(body);
-                    saveSnippets(snippets);
-                    res.writeHead(200, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ success: true, count: snippets.length }));
-                } catch (e) {
-                    res.writeHead(400, { 'Content-Type': 'application/json' });
-                    res.end(JSON.stringify({ success: false, error: 'Invalid JSON body' }));
-                }
-            });
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true, message: 'Snippets database is in secure read-only presentation mode.' }));
             return;
         }
     }

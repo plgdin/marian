@@ -726,9 +726,7 @@ function renderSnippets() {
                     <span class="snippet-meta-item" title="Language mode"><i class="fa-solid fa-code"></i> ${snippet.language.toUpperCase()}</span>
                 </div>
                 <div class="snippet-card-controls">
-                    <button class="btn-card-control ctrl-view" title="Inspect Code Details"><i class="fa-solid fa-eye"></i></button>
-                    <button class="btn-card-control ctrl-edit" title="Edit Title/Content"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn-card-control ctrl-delete" title="Delete Snippet"><i class="fa-solid fa-trash-can"></i></button>
+                    <button class="btn-card-control ctrl-view" title="Inspect Code Details"><i class="fa-solid fa-eye"></i> Inspect Details</button>
                 </div>
             </div>
         `;
@@ -738,8 +736,6 @@ function renderSnippets() {
             openRightDrawer(snippet);
         });
         card.querySelector('.ctrl-view').addEventListener('click', (e) => { e.stopPropagation(); openRightDrawer(snippet); });
-        card.querySelector('.ctrl-edit').addEventListener('click', (e) => { e.stopPropagation(); openEditModal(snippet); });
-        card.querySelector('.ctrl-delete').addEventListener('click', (e) => { e.stopPropagation(); deleteSnippet(snippet.id); });
         dom.snippetsContainer.appendChild(card);
     });
 }

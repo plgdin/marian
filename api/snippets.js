@@ -93,37 +93,21 @@ module.exports = function handler(req, res) {
     }
 
     if (method === 'GET') {
-        // Try reading snippets.json first
-        if (fs.existsSync(dbPath)) {
-            try {
-                const raw = fs.readFileSync(dbPath, 'utf8');
-                return res.status(200).json(JSON.parse(raw));
-            } catch (e) {
-                // fallback
-            }
-        }
-
-        // Try reading doc.txt dynamically
+        // Read and parse doc.txt dynamically as the absolute single source of truth
         if (fs.existsSync(txtPath)) {
             try {
                 const rawText = fs.readFileSync(txtPath, 'utf8');
                 const parsed = parseDocText(rawText);
                 return res.status(200).json(parsed);
             } catch (e) {
-                return res.status(500).json({ error: 'Failed to parse seed file' });
+                return res.status(500).json({ error: 'Failed to parse doc.txt file' });
             }
         }
-
         return res.status(200).json([]);
     } else if (method === 'POST') {
-        // Vercel serverless has a read-only disk environment.
-        // We acknowledge the POST data, return a success status, while client-side
-        // localStorage stores the data in active memory so the UX remains fully functional.
-        const snippets = req.body;
         return res.status(200).json({
             success: true,
-            message: 'Data received in serverless cloud. LocalStorage will persist local modifications in browser.',
-            count: Array.isArray(snippets) ? snippets.length : 0
+            message: 'Database is in secure read-only presentation mode.'
         });
     }
 
