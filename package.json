@@ -1,0 +1,10 @@
+{
+  "name": "clipflow",
+  "version": "1.0.0",
+  "description": "Premium monochrome clipboard host",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {}
+}
