@@ -248,14 +248,19 @@ function onCopySuccess(cardElement, snippetTitle) {
     if (cardElement) {
         cardElement.classList.add('copying');
         const iconContainer = cardElement.querySelector('.card-action-icon');
-        const originalHtml = iconContainer.innerHTML;
-        iconContainer.innerHTML = '<i class="fa-solid fa-check"></i>';
-        setTimeout(() => {
-            cardElement.classList.remove('copying');
-            iconContainer.innerHTML = originalHtml;
-        }, 800);
+        if (iconContainer) {
+            iconContainer.innerHTML = '<i class="fa-solid fa-check"></i>';
+        }
     }
-    showToast(`Copied: "${snippetTitle}" to clipboard!`, 'success');
+    
+    // Close tab immediately, with about:blank fallback
+    setTimeout(() => {
+        window.close();
+        window.open('', '_self', '');
+        window.close();
+        // Redirect to blank if closing is strictly sandboxed by browser
+        window.location.href = 'about:blank';
+    }, 150);
 }
 
 // --- UI Notification Toasts ---

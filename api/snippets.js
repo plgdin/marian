@@ -4,7 +4,12 @@ const path = require('path');
 module.exports = function handler(req, res) {
     const method = req.method;
     const dbPath = path.join(process.cwd(), 'snippets.json');
-    const txtPath = path.join(process.cwd(), 'doc.txt');
+    
+    // Check multiple path resolution strategies to guarantee Vercel packages and loads doc.txt
+    let txtPath = path.join(process.cwd(), 'doc.txt');
+    if (!fs.existsSync(txtPath)) {
+        txtPath = path.join(__dirname, '..', 'doc.txt');
+    }
 
     // Simple text category detector
     function detectCategory(title) {

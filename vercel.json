@@ -1,6 +1,11 @@
 {
   "version": 2,
   "cleanUrls": true,
+  "functions": {
+    "api/snippets.js": {
+      "includeFiles": "doc.txt"
+    }
+  },
   "routes": [
     {
       "src": "/api/snippets",
