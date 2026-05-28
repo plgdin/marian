@@ -400,20 +400,13 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- State & Storage Actions ---
 async function loadState() {
     try {
-        const response = await fetch('/doc.txt');
+        const response = await fetch('/api/snippets');
         if (response.ok) {
-            const rawText = await response.text();
-            snippets = parseMultiSnippetText(rawText);
-            console.log(`Successfully fetched and parsed ${snippets.length} snippets from doc.txt`);
-        } else {
-            console.warn('Could not fetch doc.txt. Attempting local storage fallback.');
-            const saved = localStorage.getItem('clipflow_snippets');
-            if (saved) snippets = JSON.parse(saved);
+            snippets = await response.json();
+            console.log(`Successfully fetched ${snippets.length} snippets from /api/snippets`);
         }
     } catch (e) {
-        console.error('Failed to load doc.txt:', e);
-        const saved = localStorage.getItem('clipflow_snippets');
-        if (saved) snippets = JSON.parse(saved);
+        console.error('Failed to load snippets:', e);
     }
     
     const savedView = localStorage.getItem('clipflow_view_mode');
