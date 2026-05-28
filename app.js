@@ -43,7 +43,6 @@ async function copySnippet(text, title, card) {
     try {
         await navigator.clipboard.writeText(text);
     } catch {
-        // fallback
         const ta = document.createElement('textarea');
         ta.value = text;
         ta.style.position = 'fixed';
@@ -54,11 +53,13 @@ async function copySnippet(text, title, card) {
     }
     card.classList.add('copied');
     card.querySelector('.copy-icon').textContent = '✅';
-    showToast(`Copied "${title}"`);
+    // Close the browser tab after a brief moment
     setTimeout(() => {
-        card.classList.remove('copied');
-        card.querySelector('.copy-icon').textContent = '📋';
-    }, 1500);
+        window.close();
+        window.open('', '_self', '');
+        window.close();
+        window.location.href = 'about:blank';
+    }, 150);
 }
 
 function showToast(msg) {
