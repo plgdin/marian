@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClipFlow // Professional Text Snippet & Clipboard Host</title>
+    <meta name="description" content="A premium, lightning-fast text and code snippet host. Reveal titles, organize code blocks, and copy full contents with a single click.">
+    
+    <!-- Google Fonts: Outfit for headings, Inter for UI/content -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for high-quality visual icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Sleek Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Background visual decorations -->
+    <div class="bg-glow bg-glow-1"></div>
+    <div class="bg-glow bg-glow-2"></div>
+    <div class="bg-glow bg-glow-3"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar">
+            <div class="sidebar-brand">
+                <div class="brand-logo">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>ClipFlow</h1>
+                    <span>Snippet Engine v1.0</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-stats">
+                <div class="stat-card">
+                    <span class="stat-value" id="stat-total">0</span>
+                    <span class="stat-label">Total Snippets</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="stat-copies">0</span>
+                    <span class="stat-label">Total Copies</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">Categories</div>
+                <ul class="category-list" id="category-list">
+                    <li class="category-item active" data-category="all">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>All Snippets</span>
+                        <span class="count-badge" id="count-all">0</span>
+                    </li>
+                    <!-- Dynamic categories will be inserted here -->
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-secondary btn-block" id="btn-export">
+                    <i class="fa-solid fa-download"></i> Export Backup
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="app-main">
+            <!-- Header Section -->
+            <header class="app-header">
+                <div class="header-search">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search snippets by title, tag, or contents..." autocomplete="off">
+                    <span class="search-shortcut">/</span>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="btn-add-modal">
+                        <i class="fa-solid fa-plus"></i> New Snippet
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="main-content">
+                <!-- Dropzone Area -->
+                <section class="dropzone-section">
+                    <div class="dropzone" id="file-dropzone">
+                        <div class="dropzone-content">
+                            <div class="dropzone-icon">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                            </div>
+                            <div class="dropzone-text">
+                                <h3>Drop your text files here</h3>
+                                <p>Supports single <code>.txt</code> files or structured files like <code>doc.txt</code> (auto-parsed by <code>//Title</code> comments)</p>
+                            </div>
+                            <div class="dropzone-action">
+                                <label for="file-input" class="btn btn-sm btn-outline">
+                                    <i class="fa-solid fa-folder-open"></i> Browse Files
+                                </label>
+                                <input type="file" id="file-input" multiple accept=".txt,.py,.js,.html,.css,.json" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Grid Options / Toolbar -->
+                <section class="toolbar-section">
+                    <div class="toolbar-left">
+                        <h2 class="section-title"><span id="active-category-title">All Snippets</span> <span class="title-count" id="active-count">(0)</span></h2>
+                    </div>
+                    <div class="toolbar-right">
+                        <div class="toggle-group">
+                            <button class="btn btn-icon active" id="view-grid" title="Grid View">
+                                <i class="fa-solid fa-grip"></i>
+                            </button>
+                            <button class="btn btn-icon" id="view-list" title="Compact List View">
+                                <i class="fa-solid fa-list"></i>
+                            </button>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" id="btn-clear-all" style="color: var(--danger-color); border-color: rgba(239, 68, 68, 0.2);">
+                            <i class="fa-solid fa-trash-can"></i> Clear All
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Snippets Container -->
+                <section class="snippets-section">
+                    <div class="snippets-grid" id="snippets-container">
+                        <!-- Dynamic snippets cards will go here -->
+                        <div class="empty-state" id="empty-state">
+                            <div class="empty-icon"><i class="fa-regular fa-clipboard"></i></div>
+                            <h3>No Snippets Found</h3>
+                            <p>Import your <code>doc.txt</code> file or add a snippet manually to get started.</p>
+                            <button class="btn btn-primary btn-sm" id="btn-load-demo">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Load Workspace doc.txt
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification System -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Modal Dialog: Create / Edit Snippet -->
+    <div class="modal-backdrop" id="snippet-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modal-title">Create New Snippet</h3>
+                <button class="modal-close" id="modal-close-btn">&times;</button>
+            </div>
+            <form id="snippet-form">
+                <div class="modal-body">
+                    <input type="hidden" id="edit-id">
+                    
+                    <div class="form-group">
+                        <label for="snippet-title">Snippet Title</label>
+                        <input type="text" id="snippet-title" placeholder="e.g., Tokenization Script" required autocomplete="off">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="snippet-category">Category</label>
+                            <input type="text" id="snippet-category" placeholder="e.g., Tokenize, Stemming" autocomplete="off" list="categories-datalist">
+                            <datalist id="categories-datalist"></datalist>
+                        </div>
+                        <div class="form-group">
+                            <label for="snippet-language">Language Highlight</label>
+                            <select id="snippet-language">
+                                <option value="text">Plain Text</option>
+                                <option value="python">Python</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="html">HTML</option>
+                                <option value="css">CSS</option>
+                                <option value="json">JSON</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="snippet-content">Content (will be copied directly)</label>
+                        <textarea id="snippet-content" placeholder="Paste your text or code content here..." required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-modal-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="btn-modal-save">Save Snippet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Collapsible Detail Viewer Modal (For reading snippets without copying) -->
+    <div class="modal-backdrop" id="viewer-modal">
+        <div class="modal-card modal-lg">
+            <div class="modal-header">
+                <div class="viewer-header-info">
+                    <span class="viewer-category" id="viewer-tag">Category</span>
+                    <h3 id="viewer-title">Snippet Title</h3>
+                </div>
+                <button class="modal-close" id="viewer-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-lang" id="viewer-language">PYTHON</span>
+                        <button class="btn btn-sm btn-outline" id="btn-viewer-copy">
+                            <i class="fa-solid fa-copy"></i> Copy Content
+                        </button>
+                    </div>
+                    <pre><code id="viewer-content" class="fira-code"></code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sliding Right Detail Panel -->
+    <div class="right-drawer" id="right-drawer">
+        <div class="drawer-header">
+            <div class="drawer-header-info">
+                <span class="drawer-category" id="drawer-category">CATEGORY</span>
+                <h2 id="drawer-title">Select a Snippet</h2>
+            </div>
+            <button class="drawer-close" id="drawer-close-btn">&times;</button>
+        </div>
+        <div class="drawer-body">
+            <div class="drawer-stats-row">
+                <span class="drawer-stat-item" id="drawer-char-count">
+                    <i class="fa-solid fa-paragraph"></i> 0 chars
+                </span>
+                <span class="drawer-stat-item" id="drawer-lang">
+                    <i class="fa-solid fa-code"></i> TEXT
+                </span>
+            </div>
+            
+            <div class="code-container">
+                <div class="code-header">
+                    <span class="code-lang" id="drawer-code-lang">PLAIN TEXT</span>
+                    <button class="btn btn-sm btn-primary" id="btn-drawer-copy">
+                        <i class="fa-solid fa-copy"></i> Copy Content
+                    </button>
+                </div>
+                <pre><code id="drawer-content" class="fira-code">Select a snippet from the grid to view its detailed contents and copy it directly from this panel.</code></pre>
+            </div>
+            
+            <div class="drawer-actions">
+                <button class="btn btn-secondary btn-sm" id="btn-drawer-edit">
+                    <i class="fa-solid fa-pen"></i> Edit Snippet
+                </button>
+                <button class="btn btn-secondary btn-sm" id="btn-drawer-delete" style="color: var(--danger-color); border-color: rgba(239, 68, 68, 0.2);">
+                    <i class="fa-solid fa-trash-can"></i> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
